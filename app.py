@@ -103,7 +103,7 @@ def _build_email(ref, data, date):
 <div style="max-width:620px;margin:30px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,60,140,0.10)">
 
   <div style="background:linear-gradient(135deg,#0a1628,#1a3a6e);padding:24px 30px">
-    <img src="data:image/png;base64,{LOGO_B64}" alt="iDealz" style="height:48px;filter:brightness(0) invert(1);display:block;margin-bottom:10px"/>
+    <img src="data:image/png;base64,{LOGO_B64}" alt="iDealz" style="height:48px;display:block;margin-bottom:10px"/>
     <div style="color:#fff;font-size:16px;font-weight:600">Influencer Collaboration Agreement</div>
     <div style="color:rgba(255,255,255,0.5);font-size:12px;margin-top:3px">iDealz Lanka Pvt Ltd · Official Copy</div>
   </div>
@@ -145,7 +145,7 @@ def _build_email(ref, data, date):
   </div>
 
   <div style="background:#f7faff;border-top:1px solid #e8eef7;padding:14px 30px;display:flex;align-items:center;justify-content:space-between">
-    <img src="data:image/png;base64,{LOGO_B64}" alt="iDealz" style="height:22px;opacity:0.5"/>
+    <img src="data:image/png;base64,{LOGO_B64}" alt="iDealz" style="height:22px;opacity:0.85"/>
     <span style="font-size:11px;color:#a0b4c8">iDealz Lanka Pvt Ltd · Official Agreement</span>
   </div>
 </div>
