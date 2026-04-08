@@ -84,7 +84,9 @@ def _send_email(to, subject, html, sig_png, ref):
     encoders.encode_base64(part)
     part.add_header("Content-Disposition", f'attachment; filename="signature-{ref}.png"')
     msg.attach(part)
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as s:
+    with smtplib.SMTP("smtp.gmail.com", 587) as s:
+        s.ehlo()
+        s.starttls()
         s.login(GMAIL_SENDER, GMAIL_PASSWORD)
         s.sendmail(GMAIL_SENDER, to, msg.as_string())
 
