@@ -111,11 +111,20 @@
 
     <!-- Link box shown after generating -->
     <div class="link-box" id="link-box">
-      <h3>Share this link with the influencer to sign:</h3>
-      <div class="link-url" id="link-url"></div>
-      <button class="btn-copy" onclick="copyLink()">Copy link</button>
-      <button class="btn-whatsapp" onclick="sendWhatsApp()">Send via WhatsApp</button>
-      <div class="copy-msg" id="copy-msg">Link copied to clipboard!</div>
+      <h3>✅ Agreement link ready!</h3>
+      <div style="background:#fff;border:1px solid #dde6f5;border-radius:10px;padding:14px;margin:10px 0;font-size:13px;color:#4a5e78;line-height:1.7">
+        <span style="font-size:11px;color:#9ab0c8;display:block;margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px">WhatsApp message preview</span>
+        Hi <strong id="preview-name">Influencer</strong>! 👋<br>
+        Your iDealz Lanka Pvt Ltd Collaboration Agreement is ready for your signature.<br><br>
+        Please tap the link below to review and sign:<br>
+        <span style="color:#1565C0;font-size:12px">[Signing link]</span><br><br>
+        This link is for you only. Please sign at your earliest convenience.<br>
+        — iDealz Lanka Team
+      </div>
+      <div id="link-url" style="display:none"></div>
+      <button class="btn-whatsapp" onclick="sendWhatsApp()">📲 Send via WhatsApp</button>
+      <button class="btn-copy" onclick="copyLink()" style="margin-top:8px">🔗 Copy raw link</button>
+      <div class="copy-msg" id="copy-msg">Link copied!</div>
     </div>
   </div>
 
@@ -136,33 +145,53 @@
     return ok;
   }
 
-  function generateLink() {
+  async function generateLink() {
     if (!validate()) return;
 
+    const btn = document.querySelector(".btn-primary");
+    btn.disabled = true;
+    btn.textContent = "Generating…";
+
     const data = {
-      name:       document.getElementById("name").value.trim(),
-      email:      document.getElementById("email").value.trim(),
-      phone:      document.getElementById("phone").value.trim(),
-      handle:     document.getElementById("handle").value.trim(),
-      platform:   document.getElementById("platform").value,
-      content:    document.getElementById("content").value,
-      sd:         document.getElementById("start-date").value,
-      ed:         document.getElementById("end-date").value,
-      comp:       document.getElementById("compensation").value.trim(),
-      tmodel:     document.getElementById("trade-model").value.trim(),
-      trate:      document.getElementById("trade-rate").value.trim(),
-      nmodel:     document.getElementById("new-model").value.trim(),
-      idzname:    document.getElementById("idz-name").value.trim(),
-      idzdesg:    document.getElementById("idz-desg").value.trim(),
+      name:     document.getElementById("name").value.trim(),
+      email:    document.getElementById("email").value.trim(),
+      phone:    document.getElementById("phone").value.trim(),
+      handle:   document.getElementById("handle").value.trim(),
+      platform: document.getElementById("platform").value,
+      content:  document.getElementById("content").value,
+      sd:       document.getElementById("start-date").value,
+      ed:       document.getElementById("end-date").value,
+      comp:     document.getElementById("compensation").value.trim(),
+      tmodel:   document.getElementById("trade-model").value.trim(),
+      trate:    document.getElementById("trade-rate").value.trim(),
+      nmodel:   document.getElementById("new-model").value.trim(),
+      idzname:  document.getElementById("idz-name").value.trim(),
+      idzdesg:  document.getElementById("idz-desg").value.trim(),
     };
 
+    // Build long URL with encoded data
     const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(data))));
-    const base = window.location.origin + window.location.pathname.replace("fill", "sign");
-    const link = base + "?d=" + encoded;
+    const longUrl  = window.location.origin + "/sign?d=" + encoded;
 
-    document.getElementById("link-url").textContent = link;
+    // Shorten via TinyURL
+    try {
+      const res = await fetch("https://tinyurl.com/api-create.php?url=" + encodeURIComponent(longUrl));
+      const short = await res.text();
+      const finalLink = short.startsWith("https://tinyurl.com") ? short.trim() : longUrl;
+      document.getElementById("link-url").textContent = finalLink;
+      const firstName = document.getElementById("name").value.trim().split(" ")[0];
+      document.getElementById("preview-name").textContent = firstName;
+    } catch(e) {
+      // If TinyURL fails, show long URL as fallback
+      document.getElementById("link-url").textContent = longUrl;
+      const firstName2 = document.getElementById("name").value.trim().split(" ")[0];
+      if(document.getElementById("preview-name")) document.getElementById("preview-name").textContent = firstName2;
+    }
+
     document.getElementById("link-box").style.display = "block";
     document.getElementById("link-box").scrollIntoView({behavior:"smooth"});
+    btn.disabled = false;
+    btn.textContent = "Generate signing link →";
   }
 
   function copyLink() {
@@ -176,8 +205,8 @@
 
   function sendWhatsApp() {
     const link = document.getElementById("link-url").textContent;
-    const name = document.getElementById("name").value.trim();
-    const msg = "Hi " + name + ", please sign your iDealz collaboration agreement here: " + link;
+    const name = document.getElementById("name").value.trim().split(" ")[0];
+    const msg = "Hi " + name + "! 👋\n\nYour iDealz Lanka Pvt Ltd Collaboration Agreement is ready for your signature.\n\nPlease tap the link below to review and sign:\n" + link + "\n\nThis link is for you only. Please sign at your earliest convenience.\n\n— iDealz Lanka Team";
     window.open("https://wa.me/?text=" + encodeURIComponent(msg), "_blank");
   }
 
